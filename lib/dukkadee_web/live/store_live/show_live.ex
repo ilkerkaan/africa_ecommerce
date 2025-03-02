@@ -211,7 +211,7 @@ defmodule DukkadeeWeb.StoreLive.ShowLive do
                   </p>
                   
                   <p class="text-gray-500 text-sm">
-                    - <%= testimonial.customer_name %>, <%= testimonial.date |> Calendar.strftime("%b %d, %Y") %>
+                    - <%= testimonial.name %>, <%= testimonial.date |> Calendar.strftime("%b %d, %Y") %>
                   </p>
                 </div>
               <% end %>

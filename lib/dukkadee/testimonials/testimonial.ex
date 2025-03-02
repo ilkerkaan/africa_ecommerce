@@ -3,7 +3,7 @@ defmodule Dukkadee.Testimonials.Testimonial do
   import Ecto.Changeset
 
   schema "testimonials" do
-    field :customer_name, :string
+    field :name, :string
     field :customer_image, :string
     field :content, :string
     field :rating, :integer
@@ -20,8 +20,8 @@ defmodule Dukkadee.Testimonials.Testimonial do
 
   def changeset(testimonial, attrs) do
     testimonial
-    |> cast(attrs, [:customer_name, :customer_image, :content, :rating, :service_type, :is_approved, :featured, :store_id, :customer_id, :date])
-    |> validate_required([:customer_name, :content, :rating, :store_id])
+    |> cast(attrs, [:name, :customer_image, :content, :rating, :service_type, :is_approved, :featured, :store_id, :customer_id, :date])
+    |> validate_required([:name, :content, :rating, :store_id])
     |> validate_inclusion(:rating, 1..5)
     |> validate_length(:content, min: 10, max: 1000)
     |> set_date_if_not_provided()
