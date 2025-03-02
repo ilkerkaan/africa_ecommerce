@@ -16,6 +16,35 @@ defmodule Dukkadee.Stores do
   end
 
   @doc """
+  Returns a paginated list of stores.
+  
+  ## Options
+    * :page - Page number (default: 1)
+    * :per_page - Number of items per page (default: 12)
+  """
+  def list_stores_paginated(opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 12)
+    
+    query = from s in Store,
+      order_by: [desc: s.inserted_at]
+    
+    Repo.paginate(query, page: page, page_size: per_page)
+  end
+
+  @doc """
+  Returns the list of featured stores.
+  """
+  def list_featured_stores(limit \\ 6) do
+    # In the future, this could be based on store ratings, activity or paid promotion
+    query = from s in Store,
+      order_by: [desc: s.inserted_at],
+      limit: ^limit
+    
+    Repo.all(query)
+  end
+
+  @doc """
   Returns the list of stores owned by a specific user.
   """
   def list_stores_by_owner(user_id) do
@@ -93,5 +122,45 @@ defmodule Dukkadee.Stores do
       where: ilike(s.name, ^wildcard_query) or ilike(s.description, ^wildcard_query)
     )
     |> Repo.all()
+  end
+  
+  @doc """
+  Search stores with pagination.
+  
+  ## Options
+    * :query - Search string
+    * :page - Page number (default: 1)
+    * :per_page - Number of items per page (default: 12)
+  """
+  def search_stores_paginated(search_query, opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 12)
+    
+    wildcard_query = "%#{search_query}%"
+    
+    query = from s in Store,
+      where: ilike(s.name, ^wildcard_query) or ilike(s.description, ^wildcard_query),
+      order_by: [desc: s.inserted_at]
+    
+    Repo.paginate(query, page: page, page_size: per_page)
+  end
+  
+  @doc """
+  Filter stores by criteria.
+  """
+  def filter_stores(criteria \\ %{}) do
+    base_query = from(s in Store)
+    
+    query = Enum.reduce(criteria, base_query, fn
+      {:name, name}, query when is_binary(name) and name != "" ->
+        where(query, [s], ilike(s.name, ^"%#{name}%"))
+      
+      {:description, description}, query when is_binary(description) and description != "" ->
+        where(query, [s], ilike(s.description, ^"%#{description}%"))
+      
+      {_, _}, query -> query
+    end)
+    
+    Repo.all(query)
   end
 end

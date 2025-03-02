@@ -34,7 +34,55 @@ Repo.insert!(
     secondary_color: "#b7acd4",
     accent_color: "#272727",
     logo_url: "/images/inklessismore-logo.png",
-    owner_id: admin_user.id
+    user_id: admin_user.id
+  },
+  on_conflict: :replace_all,
+  conflict_target: :slug
+)
+
+# Create Lagos Fashion Outlet store
+Repo.insert!(
+  %Store{
+    name: "Lagos Fashion Outlet",
+    slug: "lagos-fashion",
+    description: "Contemporary African fashion from Nigeria's leading designers",
+    primary_color: "#00AA55",
+    secondary_color: "#FF6600",
+    accent_color: "#333333",
+    logo_url: "/images/lagos-fashion-logo.png",
+    user_id: admin_user.id
+  },
+  on_conflict: :replace_all,
+  conflict_target: :slug
+)
+
+# Create Cape Town Artisans store
+Repo.insert!(
+  %Store{
+    name: "Cape Town Artisans",
+    slug: "capetown-artisans",
+    description: "Handcrafted goods from South Africa's finest craftspeople",
+    primary_color: "#0066CC",
+    secondary_color: "#FFCC00",
+    accent_color: "#222222",
+    logo_url: "/images/capetown-artisans-logo.png",
+    user_id: admin_user.id
+  },
+  on_conflict: :replace_all,
+  conflict_target: :slug
+)
+
+# Create Accra Spice Market store
+Repo.insert!(
+  %Store{
+    name: "Accra Spice Market",
+    slug: "accra-spice",
+    description: "Authentic Ghanaian spices and ingredients delivered to your door",
+    primary_color: "#CC0000",
+    secondary_color: "#00CC00",
+    accent_color: "#2A2A2A",
+    logo_url: "/images/accra-spice-logo.png",
+    user_id: admin_user.id
   },
   on_conflict: :replace_all,
   conflict_target: :slug

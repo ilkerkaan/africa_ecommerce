@@ -31,6 +31,53 @@ defmodule Dukkadee.Products do
     |> where([p], p.store_id == ^store_id)
     |> Repo.all()
   end
+  
+  @doc """
+  List featured products for a specific store.
+  
+  Returns a list of up to `limit` featured products for the given store.
+  Featured products are determined by the is_featured flag.
+  """
+  def list_featured_products_by_store(store_id, limit \\ 4) do
+    Product
+    |> where([p], p.store_id == ^store_id)
+    |> where([p], p.is_published == true)
+    |> order_by([p], [desc: p.is_featured, desc: p.inserted_at])
+    |> limit(^limit)
+    |> Repo.all()
+  end
+  
+  @doc """
+  List all product categories for a specific store.
+  
+  Returns a unique list of categories used by the store's products.
+  """
+  def list_categories_by_store(store_id) do
+    Product
+    |> where([p], p.store_id == ^store_id)
+    |> where([p], p.is_published == true)
+    |> where([p], not is_nil(p.category))
+    |> select([p], p.category)
+    |> distinct(true)
+    |> Repo.all()
+  end
+  
+  @doc """
+  List products by category for a specific store.
+  
+  Returns a list of products that belong to the specified category in the given store.
+  """
+  def list_products_by_category(store_id, category, params \\ %{}) do
+    page = Map.get(params, "page", "1") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
+    
+    Product
+    |> where([p], p.store_id == ^store_id)
+    |> where([p], p.category == ^category)
+    |> where([p], p.is_published == true)
+    |> order_by([p], desc: p.inserted_at)
+    |> Repo.paginate(page: page, page_size: per_page)
+  end
 
   @doc """
   Gets a single product.
@@ -123,41 +170,28 @@ defmodule Dukkadee.Products do
   end
 
   @doc """
-  Searches products across all stores.
+  Returns an `%Ecto.Changeset{}` for tracking variant changes.
   """
-  def search_marketplace(term) do
-    wildcard_term = "%#{term}%"
+  def change_variant(%Variant{} = variant, attrs \\ %{}) do
+    Variant.changeset(variant, attrs)
+  end
+  
+  @doc """
+  Search products by name or description within a store.
+  
+  Returns a paginated list of products matching the search term.
+  """
+  def search_products(store_id, search_term, params \\ %{}) do
+    page = Map.get(params, "page", "1") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
+    
+    search_term = "%#{search_term}%"
     
     Product
+    |> where([p], p.store_id == ^store_id)
     |> where([p], p.is_published == true)
-    |> where([p], ilike(p.name, ^wildcard_term) or ilike(p.description, ^wildcard_term) or ^term in p.tags)
-    |> Repo.all()
-    |> Repo.preload(:store)
-  end
-
-  @doc """
-  Searches products within a specific store.
-  """
-  def search_store_products(store_id, term) do
-    wildcard_term = "%#{term}%"
-    
-    Product
-    |> where([p], p.store_id == ^store_id and p.is_published == true)
-    |> where([p], ilike(p.name, ^wildcard_term) or ilike(p.description, ^wildcard_term) or ^term in p.tags)
-    |> Repo.all()
-  end
-
-  @doc """
-  Filters products by category.
-  """
-  def filter_by_category(query \\ Product, category) do
-    where(query, [p], p.category == ^category)
-  end
-
-  @doc """
-  Filters products by price range.
-  """
-  def filter_by_price_range(query \\ Product, min_price, max_price) do
-    where(query, [p], p.price >= ^min_price and p.price <= ^max_price)
+    |> where([p], ilike(p.name, ^search_term) or ilike(p.description, ^search_term))
+    |> order_by([p], desc: p.inserted_at)
+    |> Repo.paginate(page: page, page_size: per_page)
   end
 end

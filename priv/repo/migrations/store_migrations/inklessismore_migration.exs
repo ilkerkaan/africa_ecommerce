@@ -16,7 +16,7 @@ defmodule Dukkadee.Repo.Migrations.InklessismoreMigration do
       secondary_color: "#FFFFFF", # White
       accent_color: "#FF6633",   # Orange accent
       logo_url: "/images/stores/inklessismore/logo.png",
-      owner_id: 1  # Assuming owner ID 1 for now, update as needed
+      user_id: 1  # Using user_id instead of owner_id to match schema
     })
 
     IO.puts("Created store: #{store.name}")

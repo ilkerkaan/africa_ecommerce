@@ -95,6 +95,14 @@ defmodule DukkadeeWeb.Router do
     live "/marketplace/categories/:category", MarketplaceLive.Index, :category
     live "/open_new_store", StoreCreationLive.Index, :index
     
+    # Stores list page
+    live "/stores", StoreLive.ListLive, :index
+    live "/stores/:slug", StoreLive.ShowLive, :show
+    
+    # Store discovery feature
+    live "/stores/discover", StoreLive.DiscoveryLive, :index
+    live "/stores/discover/search", StoreLive.DiscoveryLive, :search
+    
     # Store templates routes
     get "/templates", StoreTemplateController, :index
     get "/templates/import", StoreTemplateController, :import_legacy
