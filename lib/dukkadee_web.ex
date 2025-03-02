@@ -79,6 +79,18 @@ defmodule DukkadeeWeb do
     end
   end
 
+  def view do
+    quote do
+      use Phoenix.View,
+        root: "lib/dukkadee_web/templates",
+        namespace: DukkadeeWeb
+
+      import Phoenix.Component
+      import DukkadeeWeb.ErrorHelpers
+      import DukkadeeWeb.Gettext
+    end
+  end
+
   defp html_helpers do
     quote do
       # HTML escaping functionality

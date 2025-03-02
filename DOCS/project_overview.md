@@ -1,19 +1,19 @@
-# Dukkadee.com Project Overview
+# Deecommerce Project Overview
 
 Last updated: March 2, 2025
 
 ## 1. Platform Overview
 
-Dukkadee is a dual-purpose e-commerce platform that serves as both:
+Deecommerce is a dual-purpose e-commerce platform that serves as both:
 1. A store creation application that enables merchants to quickly establish their online presence
-2. A global marketplace that aggregates products from individual stores
+2. The host for the Dukkadee global marketplace that aggregates products from individual stores
 
-The platform is built using Elixir, Phoenix with LiveView, and shadcn UI components. It allows users to quickly open their own online stores with a global marketplace and support for custom domains.
+The platform is built using Elixir, Phoenix with LiveView, and shadcn UI components. It allows users to quickly open their own online stores with optional integration to the Dukkadee marketplace and support for custom domains.
 
 ## 2. Store Ownership and Access Model
 
 ### Store Ownership
-- Each store on the Dukkadee platform is **independently owned** by different merchants/store owners
+- Each store on the Deecommerce platform is **independently owned** by different merchants/store owners
 - Store owners maintain **full access and control** over their individual stores
 - Store owners have complete autonomy over their store's:
   - Products and inventory
@@ -32,12 +32,12 @@ The platform is built using Elixir, Phoenix with LiveView, and shadcn UI compone
 
 ## 3. Hosting Options
 
-Dukkadee provides flexible hosting options to accommodate different merchant needs:
+Deecommerce provides flexible hosting options to accommodate different merchant needs:
 
-### Dukkadee-Hosted Solution (Default)
-- Stores are hosted on Dukkadee's infrastructure
+### Deecommerce-Hosted Solution (Default)
+- Stores are hosted on Deecommerce's infrastructure
 - Fully managed hosting with automatic updates and maintenance
-- Integrated with all Dukkadee platform features
+- Integrated with all Deecommerce platform features
 - Custom domain support (e.g., yourstore.com or store.dukkadee.com)
 - Simplified setup process with minimal technical requirements
 - Includes security, backups, and performance optimization
@@ -56,15 +56,15 @@ Dukkadee provides flexible hosting options to accommodate different merchant nee
 ## 4. Data Ownership and Privacy
 
 - Store owners **own all their store data**
-- Customer data belongs to the respective store owner, not Dukkadee
-- Dukkadee acts as a data processor, not a data controller for store-specific data
+- Customer data belongs to the respective store owner, not Deecommerce
+- Deecommerce acts as a data processor, not a data controller for store-specific data
 - Clear data segregation between stores to ensure privacy and security
 - Data portability allows store owners to export their data at any time
 
 ## 5. Technical Architecture
 
 ### Initial Implementation Approach
-- **Direct In-App Architecture** for Dukkadee-hosted solution
+- **Direct In-App Architecture** for Deecommerce-hosted solution
   - All store functionality within the same Elixir/Phoenix application
   - Phoenix contexts for logical separation of concerns
   - Elixir processes and PubSub for real-time features
@@ -83,7 +83,7 @@ Dukkadee provides flexible hosting options to accommodate different merchant nee
 - Authentication and authorization system with store-specific access controls
 
 ### Synchronization Mechanisms
-- Real-time or scheduled synchronization between self-hosted stores and the marketplace
+- Real-time or scheduled synchronization between self-hosted stores and the Dukkadee marketplace
 - Conflict resolution strategies for inventory and pricing updates
 - Offline capabilities with reconciliation upon reconnection
 
@@ -109,7 +109,7 @@ Dukkadee provides flexible hosting options to accommodate different merchant nee
   - Appointments: Scheduling and booking
   - StoreImporter: Legacy store import and redesign
   - Pages: Static page content management
-  - Marketplace: Global listing and search functionality
+  - Marketplace: Dukkadee global listing and search functionality
 
 ## 8. Key Features
 
@@ -128,7 +128,7 @@ Dukkadee provides flexible hosting options to accommodate different merchant nee
   - Store owners maintain ownership of all their customer and product data
   
 - **Flexible Hosting Options**
-  - Dukkadee-hosted solution (default)
+  - Deecommerce-hosted solution (default)
     - Fully managed hosting on our infrastructure
     - Automatic updates and maintenance
     - Integrated with all platform features
@@ -198,8 +198,8 @@ Dukkadee provides flexible hosting options to accommodate different merchant nee
 
 ## 9. Implementation Priorities
 
-1. Core platform with Dukkadee-hosted solution
-2. Marketplace integration for hosted stores
+1. Core platform with Deecommerce-hosted solution
+2. Dukkadee marketplace integration for hosted stores
 3. API development for external integration
 4. Self-hosting capabilities and documentation
 5. Advanced synchronization features

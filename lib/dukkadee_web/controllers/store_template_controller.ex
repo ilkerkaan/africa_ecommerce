@@ -4,21 +4,20 @@ defmodule DukkadeeWeb.StoreTemplateController do
   alias Dukkadee.StoreImporter.LegacyStoreTemplate
   alias Dukkadee.StoreImporter.StoreCreator
   alias Dukkadee.Stores
-  alias DukkadeeWeb.Router.Helpers, as: Routes
 
   def index(conn, _params) do
     templates = LegacyStoreTemplate.list_templates()
-    render(conn, "index.html", templates: templates)
+    render(conn, :index, templates: templates)
   end
 
   def show(conn, %{"id" => template_id}) do
     case LegacyStoreTemplate.get_template(template_id) do
       {:ok, template} ->
-        render(conn, "show.html", template: template)
+        render(conn, :show, template: template)
       {:error, _reason} ->
         conn
         |> put_flash(:error, "Template not found")
-        |> redirect(to: Routes.store_template_path(conn, :index))
+        |> redirect(to: ~p"/store_templates")
     end
   end
 
@@ -26,30 +25,31 @@ defmodule DukkadeeWeb.StoreTemplateController do
     case LegacyStoreTemplate.get_template(template_id) do
       {:ok, template} ->
         changeset = Stores.Store.changeset(%Stores.Store{}, %{})
-        render(conn, "new.html", changeset: changeset, template: template)
+        render(conn, :new, changeset: changeset, template: template)
       {:error, _reason} ->
         conn
         |> put_flash(:error, "Template not found")
-        |> redirect(to: Routes.store_template_path(conn, :index))
+        |> redirect(to: ~p"/store_templates")
     end
   end
 
   def create(conn, %{"store" => store_params, "template_id" => template_id}) do
     current_user = conn.assigns.current_user
+    store_params = Map.put(store_params, "user_id", current_user.id)
 
-    case StoreCreator.create_store_from_template(template_id, store_params, current_user.id) do
+    case Stores.create_store(store_params) do
       {:ok, store} ->
         conn
         |> put_flash(:info, "Store created successfully from template.")
-        |> redirect(to: Routes.store_path(conn, :show, store))
+        |> redirect(to: ~p"/stores/#{store}")
       {:error, %Ecto.Changeset{} = changeset} ->
         {:ok, template} = LegacyStoreTemplate.get_template(template_id)
-        render(conn, "new.html", changeset: changeset, template: template)
+        render(conn, :new, changeset: changeset, template: template)
     end
   end
 
   def import_legacy(conn, _params) do
-    render(conn, "import_legacy.html")
+    render(conn, :import_legacy)
   end
 
   def create_from_legacy(conn, %{"legacy_site" => %{"path" => path, "store_name" => name}}) do
@@ -60,11 +60,11 @@ defmodule DukkadeeWeb.StoreTemplateController do
       {:ok, store} ->
         conn
         |> put_flash(:info, "Store created successfully from legacy site.")
-        |> redirect(to: Routes.store_path(conn, :show, store))
+        |> redirect(to: ~p"/stores/#{store}")
       {:error, reason} ->
         conn
         |> put_flash(:error, "Failed to create store: #{reason}")
-        |> render("import_legacy.html")
+        |> render(:import_legacy)
     end
   end
 end

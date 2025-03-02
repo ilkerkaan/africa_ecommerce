@@ -1,6 +1,6 @@
-# Dukkadee Documentation
+# Deecommerce Documentation
 
-Welcome to the Dukkadee project documentation. This index provides links to all documentation resources for the Dukkadee e-commerce platform.
+Welcome to the Deecommerce project documentation. This index provides links to all documentation resources for the Deecommerce e-commerce platform with the Dukkadee marketplace.
 
 ## Core Documentation
 
@@ -21,7 +21,7 @@ Welcome to the Dukkadee project documentation. This index provides links to all 
 
 [phoneix guides](https://github.com/phoenixframework/phoenix/tree/v1.7.20/guides)
 
-- [dukkadee-wireframe.svg](dukkadee-wireframe.svg) - UI wireframes
+- [deecommerce-wireframe.svg](deecommerce-wireframe.svg) - UI wireframes
 - [example/](example/) - Example code snippets for reference
 
 ## External Links

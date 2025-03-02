@@ -60,12 +60,8 @@ defmodule DukkadeeWeb.StoreLive.New do
     """
   end
 
-  def handle_event("save", %{"store" => store_params}, socket) do
+  def handle_event("save", %{"store" => _store_params}, socket) do
     # TODO: Implement store creation logic
-    {:noreply, socket}
-  end
-
-  def handle_params(_params, _uri, socket) do
     {:noreply, socket}
   end
 
@@ -214,6 +210,10 @@ defmodule DukkadeeWeb.StoreLive.New do
       socket
       |> assign(changeset: Map.put(socket.assigns.changeset, :store, changeset))
 
+    {:noreply, socket}
+  end
+
+  def handle_params(_params, _uri, socket) do
     {:noreply, socket}
   end
 

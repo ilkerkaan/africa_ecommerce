@@ -11,8 +11,7 @@ defmodule Dukkadee.Application do
       # Start the Telemetry supervisor
       DukkadeeWeb.Telemetry,
       # Start the Ecto repository
-      # Temporarily disabled for testing without PostgreSQL
-      # Dukkadee.Repo,
+      Dukkadee.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Dukkadee.PubSub},
       # Start the Presence supervisor

@@ -2,6 +2,7 @@ defmodule DukkadeeWeb.Router do
   use DukkadeeWeb, :router
 
   import DukkadeeWeb.UserAuth
+  import DukkadeeWeb.CustomerAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -11,6 +12,7 @@ defmodule DukkadeeWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :fetch_current_customer
   end
 
   pipeline :api do
@@ -27,6 +29,16 @@ defmodule DukkadeeWeb.Router do
     live "/users/reset_password/:token", UserResetPasswordLive, :edit
   end
 
+  # Customer auth routes (don't require authentication)
+  scope "/customers", DukkadeeWeb do
+    pipe_through [:browser, :redirect_if_customer_is_authenticated]
+
+    live "/register", CustomerRegistrationLive, :new
+    live "/log_in", CustomerLoginLive, :new
+    live "/reset_password", CustomerResetPasswordLive, :new
+    live "/reset_password/:token", CustomerResetPasswordLive, :edit
+  end
+
   scope "/", DukkadeeWeb do
     pipe_through [:browser]
 
@@ -35,6 +47,13 @@ defmodule DukkadeeWeb.Router do
     post "/users/confirm", UserConfirmationController, :create
     get "/users/confirm/:token", UserConfirmationController, :edit
     post "/users/confirm/:token", UserConfirmationController, :update
+
+    # Customer session routes
+    delete "/customers/log_out", CustomerSessionController, :delete
+    get "/customers/confirm", CustomerConfirmationController, :new
+    post "/customers/confirm", CustomerConfirmationController, :create
+    get "/customers/confirm/:token", CustomerConfirmationController, :edit
+    post "/customers/confirm/:token", CustomerConfirmationController, :update
   end
 
   # Routes for store domain
@@ -66,6 +85,24 @@ defmodule DukkadeeWeb.Router do
     live "/marketplace/categories/:category", MarketplaceLive.Index, :category
     live "/open_new_store", StoreCreationLive.Index, :index
     
+    # Inkless Is More Store Routes
+    live "/stores/inklessismore-ke", StoreLive.TattooRemovalLive, :index
+    live "/stores/inklessismore-ke/book/:product_id", StoreLive.TattooRemovalLive, :book
+    
+    # Inkless Is More Enhanced Features
+    live "/stores/inklessismore-ke/gallery", StoreLive.TattooGalleryLive, :index
+    live "/stores/inklessismore-ke/gallery/:category", StoreLive.TattooGalleryLive, :category
+    live "/stores/inklessismore-ke/testimonials", StoreLive.TestimonialsLive, :index
+    live "/stores/inklessismore-ke/blog", StoreLive.TattooBlogLive, :index
+    live "/stores/inklessismore-ke/blog/:slug", StoreLive.TattooBlogLive, :show
+    live "/stores/inklessismore-ke/staff", StoreLive.StaffProfilesLive, :index
+    live "/stores/inklessismore-ke/gift-certificates", StoreLive.GiftCertificatesLive, :index
+    live "/stores/inklessismore-ke/gift-certificates/purchase", StoreLive.GiftCertificatesLive, :purchase
+    live "/stores/inklessismore-ke/gift-certificates/redeem", StoreLive.GiftCertificatesLive, :redeem
+    
+    # Appointment Routes
+    live "/appointments/confirmation/:id", AppointmentLive.ConfirmationLive, :show
+    
     # Store templates routes
     get "/templates", StoreTemplateController, :index
     get "/templates/import", StoreTemplateController, :import_legacy
@@ -77,6 +114,34 @@ defmodule DukkadeeWeb.Router do
     # Legacy store import routes
     post "/api/legacy-store/import", LegacyStoreController, :import
     get "/legacy-store/import/progress/:id", LegacyStoreController, :progress
+  end
+
+  # Customer portal routes that require customer authentication
+  scope "/stores/inklessismore-ke/portal", DukkadeeWeb do
+    pipe_through [:browser, :require_authenticated_customer]
+    
+    live "/", CustomerPortal.DashboardLive, :index
+    live "/appointments", CustomerPortal.AppointmentsLive, :index
+    live "/appointments/new", CustomerPortal.AppointmentsLive, :new
+    live "/appointments/:id", CustomerPortal.AppointmentsLive, :show
+    
+    live "/progress", CustomerPortal.ProgressTrackerLive, :index
+    live "/progress/:id", CustomerPortal.ProgressTrackerLive, :show
+    live "/progress/:id/photos", CustomerPortal.ProgressTrackerLive, :photos
+    
+    live "/profile", CustomerPortal.ProfileLive, :index
+    live "/profile/edit", CustomerPortal.ProfileLive, :edit
+    live "/profile/password", CustomerPortal.ProfileLive, :password
+    
+    live "/gift-certificates", CustomerPortal.GiftCertificatesLive, :index
+    live "/notifications", CustomerPortal.NotificationsLive, :index
+  end
+
+  scope "/customer", DukkadeeWeb do
+    pipe_through [:browser, :require_authenticated_customer]
+
+    live "/appointments", CustomerPortal.AppointmentsLive
+    live "/appointments/new", CustomerPortal.NewAppointmentLive
   end
 
   # Store admin routes (require authentication)
@@ -98,6 +163,30 @@ defmodule DukkadeeWeb.Router do
     live "/stores/:store_id/appointments/new", AdminLive.Appointments, :new
     live "/stores/:store_id/appointments/:id", AdminLive.Appointments, :show
     live "/stores/:store_id/appointments/:id/edit", AdminLive.Appointments, :edit
+    
+    # Additional admin routes for new features
+    live "/stores/:store_id/testimonials", AdminLive.Testimonials, :index
+    live "/stores/:store_id/testimonials/new", AdminLive.Testimonials, :new
+    live "/stores/:store_id/testimonials/:id/edit", AdminLive.Testimonials, :edit
+    
+    live "/stores/:store_id/gallery", AdminLive.Gallery, :index
+    live "/stores/:store_id/gallery/new", AdminLive.Gallery, :new
+    live "/stores/:store_id/gallery/:id/edit", AdminLive.Gallery, :edit
+    
+    live "/stores/:store_id/blog", AdminLive.Blog, :index
+    live "/stores/:store_id/blog/new", AdminLive.Blog, :new
+    live "/stores/:store_id/blog/:id/edit", AdminLive.Blog, :edit
+    
+    live "/stores/:store_id/staff", AdminLive.Staff, :index
+    live "/stores/:store_id/staff/new", AdminLive.Staff, :new
+    live "/stores/:store_id/staff/:id/edit", AdminLive.Staff, :edit
+    
+    live "/stores/:store_id/gift-certificates", AdminLive.GiftCertificates, :index
+    live "/stores/:store_id/gift-certificates/:id", AdminLive.GiftCertificates, :show
+    
+    live "/stores/:store_id/customers", AdminLive.Customers, :index
+    live "/stores/:store_id/customers/:id", AdminLive.Customers, :show
+    live "/stores/:store_id/customers/:id/progress", AdminLive.Customers, :progress
     
     live "/stores/:store_id/pages", AdminLive.Pages, :index
     live "/stores/:store_id/pages/new", AdminLive.Pages, :new

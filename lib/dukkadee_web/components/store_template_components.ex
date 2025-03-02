@@ -1,9 +1,14 @@
 defmodule DukkadeeWeb.StoreTemplateComponents do
   use Phoenix.Component
 
-  import Phoenix.HTML
+  # Import CoreComponents for shared UI components
   import DukkadeeWeb.CoreComponents
-  import DukkadeeWeb.Gettext
+
+  # Use VerifiedRoutes for route generation
+  use Phoenix.VerifiedRoutes,
+    endpoint: DukkadeeWeb.Endpoint,
+    router: DukkadeeWeb.Router,
+    statics: DukkadeeWeb.static_paths()
 
   def template_card(assigns) do
     ~H"""

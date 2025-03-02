@@ -324,6 +324,12 @@ defmodule DukkadeeWeb.StoreCreationLive.Index do
   end
 
   @impl true
+  def handle_event("select_theme", %{"theme" => theme}, socket) do
+    updated_form = Map.put(socket.assigns.form, :theme, theme)
+    {:noreply, assign(socket, form: updated_form)}
+  end
+
+  @impl true
   def handle_event("save_basic_info", params, socket) do
     # Only proceed if URL is available
     if socket.assigns.url_available do
@@ -362,23 +368,6 @@ defmodule DukkadeeWeb.StoreCreationLive.Index do
     else
       {:noreply, socket |> assign(url_available: nil, url_checking: false)}
     end
-  end
-
-  @impl true
-  def handle_info({:check_url_availability, url}, socket) do
-    # Simulate URL availability check
-    # In a real app, this would query the database
-    available = !Enum.member?(["taken", "reserved", "admin", "store"], url)
-    
-    {:noreply, socket 
-      |> assign(url_available: available) 
-      |> assign(url_checking: false)}
-  end
-
-  @impl true
-  def handle_event("select_theme", %{"theme" => theme}, socket) do
-    updated_form = Map.put(socket.assigns.form, :theme, theme)
-    {:noreply, assign(socket, form: updated_form)}
   end
 
   @impl true
@@ -442,5 +431,16 @@ defmodule DukkadeeWeb.StoreCreationLive.Index do
       socket
       |> put_flash(:info, "Your store has been created successfully!")
       |> redirect(to: "/")}
+  end
+
+  @impl true
+  def handle_info({:check_url_availability, url}, socket) do
+    # Simulate URL availability check
+    # In a real app, this would query the database
+    available = !Enum.member?(["taken", "reserved", "admin", "store"], url)
+    
+    {:noreply, socket 
+      |> assign(url_available: available) 
+      |> assign(url_checking: false)}
   end
 end

@@ -15,8 +15,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
-      }
+        // Dukkadee brand colors
+        "brand": {
+          yellow: "#fddb24",
+          "light-purple": "#b7acd4",
+          DEFAULT: "#fddb24",
+        },
+        // Dark variations
+        "brand-dark": {
+          1: "#272727",
+          2: "#282828",
+          3: "#292929",
+          4: "#2a2a2a",
+          5: "#2b2b2b",
+          6: "#2c2c2c",
+          7: "#2d2d2d",
+          8: "#2e2e2e",
+          9: "#2f2f2f",
+          10: "#303030",
+          11: "#313131",
+          12: "#323232",
+          13: "#333333",
+          14: "#343434",
+          15: "#353535",
+          16: "#363636",
+          17: "#373737",
+          DEFAULT: "#2f2f2f",
+        }
+      },
+      backgroundImage: {
+        'gradient-brand': 'linear-gradient(to right, #fddb24, #b7acd4)',
+      },
     },
   },
   plugins: [

@@ -1,18 +1,18 @@
-# Dukkadee.com E-commerce Platform
+# Deecommerce E-commerce Platform
 
 ## Overview
-Dukkadee.com is a powerful e-commerce platform that allows merchants to quickly create online stores in under 1 minute, similar to Shopify. The platform includes a global marketplace and supports both Dukkadee-hosted and self-hosted store options with custom domains. Each store on the platform is independently owned and fully controlled by individual merchants.
+Deecommerce is a powerful e-commerce platform that allows merchants to quickly create online stores in under 1 minute, similar to Shopify. The platform includes the Dukkadee global marketplace and supports both Deecommerce-hosted and self-hosted store options with custom domains. Each store on the platform is independently owned and fully controlled by individual merchants.
 
 ## Key Features
 - Quick store creation (under 1 minute)
 - Instagram product import
 - Legacy store import and redesign
 - Customizable store templates/themes
-- Global marketplace with optional product listing
+- Dukkadee global marketplace with optional product listing
 - Custom domains for individual stores
 - Appointment scheduling for service-based products
 - Independent store ownership with full merchant control
-- Flexible hosting options (Dukkadee-hosted or self-hosted)
+- Flexible hosting options (Deecommerce-hosted or self-hosted)
 
 ## Technology Stack
 - Elixir/Phoenix (with LiveView for real-time features)

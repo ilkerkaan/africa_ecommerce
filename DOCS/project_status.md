@@ -1,10 +1,10 @@
-# Dukkadee Project Status
+# Deecommerce Project Status
 
 Last updated: March 2, 2025
 
 ## Current Status Overview
 
-The Dukkadee e-commerce platform is currently in active development. This document tracks the progress of various components and features, serving as a living record of completed, in-progress, and upcoming tasks.
+The Deecommerce e-commerce platform with the Dukkadee marketplace is currently in active development. This document tracks the progress of various components and features, serving as a living record of completed, in-progress, and upcoming tasks.
 
 ## Status Dashboard
 
@@ -12,7 +12,7 @@ The Dukkadee e-commerce platform is currently in active development. This docume
 |-----------|--------|----------|
 | Core Platform | In Progress | 60% |
 | Store Creation Flow | In Progress | 75% |
-| Marketplace | Planned | 20% |
+| Dukkadee Marketplace | Planned | 20% |
 | Admin Dashboard for platform| Planned | 15% |
 | Admin Dashboard for store owners| Planned | 0% |
 | API Development | In Progress | 40% |
@@ -104,7 +104,7 @@ The Dukkadee e-commerce platform is currently in active development. This docume
 - [ ] Implement static pages/CMS functionality
 - [ ] Set up testing and deployment
 
-### Marketplace Features
+### Dukkadee Marketplace Features
 - [ ] Global product search implementation
 - [ ] Category and filter system
 - [ ] Merchant verification process

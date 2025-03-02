@@ -37,6 +37,16 @@ defmodule Dukkadee.Appointments do
   end
 
   @doc """
+  Returns the list of appointments for a specific customer.
+  """
+  def list_customer_appointments(customer_id) do
+    Appointment
+    |> where([a], a.customer_id == ^customer_id)
+    |> order_by([a], desc: a.start_time)
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single appointment.
   """
   def get_appointment(id), do: Repo.get(Appointment, id)
@@ -89,6 +99,43 @@ defmodule Dukkadee.Appointments do
             select: count(a.id)
             
     Repo.one(query) == 0
+  end
+
+  @doc """
+  Gets available time slots for a product.
+  """
+  def get_available_slots(product_id) do
+    # Get product details to determine appointment duration
+    product = Products.get_product!(product_id)
+    duration = product.appointment_duration
+
+    # Get available slots for the next 7 days
+    start_date = DateTime.utc_now()
+    end_date = DateTime.add(start_date, 7 * 24 * 60 * 60)
+
+    # Generate potential slots
+    slots = generate_time_slots(start_date, end_date, duration)
+
+    # Filter out slots that are already booked
+    Enum.filter(slots, fn slot ->
+      is_time_slot_available?(product_id, slot.start_time, slot.end_time)
+    end)
+  end
+
+  defp generate_time_slots(start_date, end_date, duration) do
+    # Generate time slots between start and end dates
+    # This is a simplified implementation - in a real system,
+    # we would consider business hours, holidays, etc.
+    Stream.unfold(start_date, fn current_time ->
+      if DateTime.compare(current_time, end_date) == :lt do
+        next_time = DateTime.add(current_time, duration)
+        slot = %{start_time: current_time, end_time: next_time}
+        {slot, next_time}
+      else
+        nil
+      end
+    end)
+    |> Enum.to_list()
   end
 
   @doc """

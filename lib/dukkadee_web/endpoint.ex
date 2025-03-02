@@ -49,7 +49,7 @@ defmodule DukkadeeWeb.Endpoint do
   plug Plug.Session, @session_options
 
   # Custom domain handling for stores
-  plug DukkadeeWeb.StoreDomainPlug
+  # plug DukkadeeWeb.StoreDomainPlug
 
   plug DukkadeeWeb.Router
 end

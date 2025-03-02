@@ -3,6 +3,19 @@ defmodule DukkadeeWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
+  # Helper functions for input component - consolidated to use pattern matching properly
+  defp get_field_name(%Phoenix.HTML.FormField{name: name}), do: name
+  defp get_field_name({name, _}), do: name
+  defp get_field_name(_), do: nil
+
+  defp get_field_id(%Phoenix.HTML.FormField{id: id}), do: id
+  defp get_field_id({name, _}), do: name
+  defp get_field_id(_), do: nil
+
+  defp get_field_value(%Phoenix.HTML.FormField{value: value}), do: value
+  defp get_field_value({_, value}), do: value
+  defp get_field_value(_), do: nil
+
   attr :field, :any,
     doc: "a form field struct retrieved from the form (e.g., @form[:email]) or a tuple of {field_name, value}"
 
@@ -64,19 +77,6 @@ defmodule DukkadeeWeb.CoreComponents do
     </div>
     """
   end
-
-  # Helper functions for field handling
-  defp get_field_name(field) when is_tuple(field), do: elem(field, 0)
-  defp get_field_name(field), do: field.name
-
-  defp get_field_id(field) when is_tuple(field) do
-    field_name = elem(field, 0)
-    "user_#{field_name}"
-  end
-  defp get_field_id(field), do: field.id
-
-  defp get_field_value(field) when is_tuple(field), do: elem(field, 1)
-  defp get_field_value(field), do: field.value
 
   @doc """
   Renders an error message.

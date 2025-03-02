@@ -101,7 +101,7 @@ defmodule DukkadeeWeb.AdminLive.Products do
       {:noreply, socket}
     else
       # Calculate progress percentage
-      progress = floor(entry.progress * 100)
+      _progress = floor(entry.progress * 100)
       
       # You could broadcast this progress to other users if needed
       # For now, we just return the socket

@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :dukkadee, Dukkadee.Repo,
   username: "postgres",
-  password: "postgres", # Updated based on memory
+  password: "20911980",
   hostname: "localhost",
   database: "dukkadee_dev",
   stacktrace: true,
@@ -11,16 +11,14 @@ config :dukkadee, Dukkadee.Repo,
   pool_size: 10,
   adapter: Ecto.Adapters.Postgres
 
-# For development, we disable any cache and enable
-# debugging and code reloading.
-#
-# The watchers configuration can be used to run external
-# watchers to your application. For example, we can use it
-# to run webpack and compile all the .js and .css files needed:
+# Endpoint configuration
 config :dukkadee, DukkadeeWeb.Endpoint,
-  # Binding to loopback ipv4 address prevents access from other machines.
-  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4002],
+  http: [
+    ip: {0, 0, 0, 0},
+    port: 4000,
+    protocol_options: [idle_timeout: :infinity]
+  ],
+  server: true,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
