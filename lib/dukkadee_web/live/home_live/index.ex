@@ -2,15 +2,24 @@ defmodule DukkadeeWeb.HomeLive.Index do
   use DukkadeeWeb, :live_view
   
   alias Dukkadee.Stores
+  alias Dukkadee.Products
 
   @impl true
   def mount(_params, _session, socket) do
     stores = Stores.list_stores()
+    featured_products = Products.list_featured_products(8)
+    
+    # Preload store data for each product
+    featured_products = Enum.map(featured_products, fn product ->
+      store = Stores.get_store!(product.store_id)
+      Map.put(product, :store_name, store.name)
+    end)
     
     {:ok, 
       socket
       |> assign(:page_title, "Welcome to Dukkadee")
       |> assign(:stores, stores)
+      |> assign(:featured_products, featured_products)
     }
   end
 
@@ -44,6 +53,68 @@ defmodule DukkadeeWeb.HomeLive.Index do
         </div>
       </div>
       
+      <!-- Featured Products Section -->
+      <%= if length(@featured_products) > 0 do %>
+        <div class="bg-white py-16">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+              <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Featured Products</h2>
+              <p class="mt-4 text-lg leading-8 text-gray-600">
+                Explore our curated selection of products from across our marketplace
+              </p>
+            </div>
+            
+            <div class="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
+              <%= for product <- @featured_products do %>
+                <.link navigate={~p"/stores/#{product.store_id}/products/#{product.id}"} class="group">
+                  <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200">
+                    <%= if product.images && length(product.images) > 0 do %>
+                      <img 
+                        src={List.first(product.images)} 
+                        alt={product.name} 
+                        class="h-full w-full object-cover object-center group-hover:opacity-75"
+                      />
+                    <% else %>
+                      <div class="h-64 w-full flex items-center justify-center bg-gray-100">
+                        <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="mt-4">
+                    <h3 class="text-sm font-medium text-gray-900"><%= product.name %></h3>
+                    <p class="mt-1 text-sm text-gray-500"><%= product.store_name %></p>
+                    <div class="mt-1 flex items-center justify-between">
+                      <p class="text-sm font-medium text-gray-900">
+                        <%= product.currency %> <%= Decimal.to_string(product.price) %>
+                      </p>
+                      <%= if product.requires_appointment do %>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                          Appointment
+                        </span>
+                      <% end %>
+                    </div>
+                  </div>
+                </.link>
+              <% end %>
+            </div>
+            
+            <div class="text-center mt-12">
+              <a 
+                href="/marketplace" 
+                class="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-50"
+              >
+                View all products
+                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      
       <!-- Available Stores Section -->
       <div class="bg-gray-50 py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -58,9 +129,9 @@ defmodule DukkadeeWeb.HomeLive.Index do
             <%= for store <- @stores do %>
               <div class="group relative overflow-hidden rounded-lg shadow-md transition transform hover:scale-105 hover:shadow-lg">
                 <div class="h-64 w-full overflow-hidden bg-gray-200">
-                  <%= if store.logo_url do %>
+                  <%= if store.logo do %>
                     <img 
-                      src={store.logo_url} 
+                      src={store.logo} 
                       alt={"#{store.name} logo"} 
                       class="h-full w-full object-cover object-center"
                     />

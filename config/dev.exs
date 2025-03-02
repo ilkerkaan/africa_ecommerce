@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :dukkadee, Dukkadee.Repo,
   username: "postgres",
-  password: "20911980",
+  password: "20911980", # Using the password from GitHub
   hostname: "localhost",
   database: "dukkadee_dev",
   stacktrace: true,
@@ -15,14 +15,16 @@ config :dukkadee, Dukkadee.Repo,
 config :dukkadee, DukkadeeWeb.Endpoint,
   http: [
     ip: {0, 0, 0, 0},
-    port: 4000,
+    port: String.to_integer(System.get_env("PORT") || "4003"),
     protocol_options: [idle_timeout: :infinity]
   ],
   server: true,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "8Pj9sBJaHg7JaTFxrqxX9DH+bN4dB/BxEV9mDyTTm4KQjwMwV+YT3dstdKFG3Y60",
+  secret_key_base:
+    System.get_env("SECRET_KEY_BASE") ||
+      "8Pj9sBJaHg7JaTFxrqxX9DH+bN4dB/BxEV9mDyTTm4KQjwMwV+YT3dstdKFG3Y60",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}

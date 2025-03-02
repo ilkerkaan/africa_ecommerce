@@ -48,8 +48,23 @@ defmodule Dukkadee.Stores do
   Returns the list of stores owned by a specific user.
   """
   def list_stores_by_owner(user_id) do
-    query = from s in Store, where: s.user_id == ^user_id
+    query = from s in Store,
+      where: s.user_id == ^user_id,
+      order_by: [desc: s.inserted_at]
+    
     Repo.all(query)
+  end
+
+  @doc """
+  Gets a store owned by a specific user.
+  
+  Returns nil if the store doesn't exist or is not owned by the specified user.
+  """
+  def get_store_by_owner(store_id, user_id) do
+    query = from s in Store,
+      where: s.id == ^store_id and s.user_id == ^user_id
+    
+    Repo.one(query)
   end
 
   @doc """

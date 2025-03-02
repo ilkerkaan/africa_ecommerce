@@ -28,9 +28,9 @@ defmodule DukkadeeWeb.StoreLive.ListLive do
           <%= for store <- @stores do %>
             <div class="group relative overflow-hidden rounded-lg shadow-lg transition transform hover:-translate-y-1 hover:shadow-xl">
               <div class="h-64 w-full overflow-hidden bg-gray-200">
-                <%= if store.logo_url do %>
+                <%= if store.logo do %>
                   <img 
-                    src={store.logo_url} 
+                    src={store.logo} 
                     alt={"#{store.name} logo"} 
                     class="h-full w-full object-cover object-center"
                   />

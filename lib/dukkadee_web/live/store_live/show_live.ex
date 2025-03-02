@@ -60,9 +60,9 @@ defmodule DukkadeeWeb.StoreLive.ShowLive do
             </div>
             
             <div>
-              <%= if @store.logo_url do %>
+              <%= if @store.logo do %>
                 <img 
-                  src={@store.logo_url} 
+                  src={@store.logo} 
                   alt={"#{@store.name} logo"} 
                   class="w-48 h-48 object-contain rounded-lg shadow-md bg-white p-4"
                 />

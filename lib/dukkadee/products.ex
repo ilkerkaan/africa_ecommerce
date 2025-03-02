@@ -42,7 +42,7 @@ defmodule Dukkadee.Products do
     Product
     |> where([p], p.store_id == ^store_id)
     |> where([p], p.is_published == true)
-    |> order_by([p], [desc: p.is_featured, desc: p.inserted_at])
+    |> where([p], p.is_featured == true)
     |> limit(^limit)
     |> Repo.all()
   end
@@ -193,5 +193,107 @@ defmodule Dukkadee.Products do
     |> where([p], ilike(p.name, ^search_term) or ilike(p.description, ^search_term))
     |> order_by([p], desc: p.inserted_at)
     |> Repo.paginate(page: page, page_size: per_page)
+  end
+
+  @doc """
+  List all categories from products table.
+  
+  Returns a list of unique category names used across all products.
+  """
+  def list_categories do
+    Product
+    |> where([p], not is_nil(p.category))
+    |> where([p], p.is_published == true)
+    |> select([p], p.category)
+    |> distinct(true)
+    |> Repo.all()
+  end
+
+  @doc """
+  List marketplace products.
+  
+  Returns a list of all products that are published and marked for marketplace listing
+  across all stores.
+  """
+  def list_marketplace_products do
+    Product
+    |> where([p], p.is_published == true)
+    |> where([p], p.is_marketplace_listed == true)
+    |> order_by([p], [desc: p.inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
+  List products by category.
+  
+  Returns a list of all marketplace products in a specific category.
+  """
+  def list_products_by_category(category) do
+    Product
+    |> where([p], p.category == ^category)
+    |> where([p], p.is_published == true)
+    |> where([p], p.is_marketplace_listed == true)
+    |> order_by([p], [desc: p.inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
+  Search products by name or description.
+  
+  Returns a list of marketplace products that match the search query in either
+  their name or description.
+  """
+  def search_products(query) do
+    search_term = "%#{query}%"
+    
+    Product
+    |> where([p], ilike(p.name, ^search_term) or ilike(p.description, ^search_term))
+    |> where([p], p.is_published == true)
+    |> where([p], p.is_marketplace_listed == true)
+    |> order_by([p], [desc: p.inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
+  Search products by name or description within a specific category.
+  
+  Returns a list of marketplace products that match the search query in either
+  their name or description and are in the specified category.
+  """
+  def search_products_by_category(query, category) do
+    search_term = "%#{query}%"
+    
+    Product
+    |> where([p], p.category == ^category)
+    |> where([p], ilike(p.name, ^search_term) or ilike(p.description, ^search_term))
+    |> where([p], p.is_published == true)
+    |> where([p], p.is_marketplace_listed == true)
+    |> order_by([p], [desc: p.inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
+  List featured products across all stores.
+  
+  Returns a list of up to `limit` featured products across all stores.
+  Featured products are determined by the is_featured flag.
+  """
+  def list_featured_products(limit \\ 8) do
+    Product
+    |> where([p], p.is_published == true)
+    |> where([p], p.is_featured == true)
+    |> order_by([p], [desc: p.inserted_at])
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
+  @doc """
+  Toggle marketplace listing for a product.
+  
+  Sets or unsets the is_marketplace_listed flag for a product.
+  Returns {:ok, product} on success, {:error, changeset} on failure.
+  """
+  def toggle_marketplace_listing(%Product{} = product) do
+    update_product(product, %{is_marketplace_listed: !product.is_marketplace_listed})
   end
 end

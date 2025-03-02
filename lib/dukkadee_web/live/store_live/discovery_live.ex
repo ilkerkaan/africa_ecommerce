@@ -87,8 +87,8 @@ defmodule DukkadeeWeb.StoreLive.DiscoveryLive do
       <div class="h-40 overflow-hidden relative">
         <div class="store-banner w-full h-full bg-gray-100 flex items-center justify-center" 
           style={"background: linear-gradient(135deg, #{assigns.store.primary_color}, #{assigns.store.secondary_color});"}>
-          <%= if assigns.store.logo_url do %>
-            <img src={assigns.store.logo_url} alt={assigns.store.name} class="w-20 h-20 object-contain"/>
+          <%= if assigns.store.logo do %>
+            <img src={assigns.store.logo} alt={assigns.store.name} class="w-20 h-20 object-contain"/>
           <% else %>
             <div class="text-white text-2xl font-bold"><%= String.slice(assigns.store.name, 0, 1) %></div>
           <% end %>

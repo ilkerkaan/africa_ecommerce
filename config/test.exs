@@ -2,10 +2,10 @@ import Config
 
 # Configure your database
 config :dukkadee, Dukkadee.Repo,
-  username: "postgres",
-  password: "20911980", # Replace with the password you set during installation
-  hostname: "localhost",
-  database: "dukkadee_test",
+  username: System.get_env("POSTGRES_USER") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "20911980",
+  hostname: System.get_env("POSTGRES_HOST") || "localhost",
+  database: System.get_env("POSTGRES_TEST_DB") || "dukkadee_test",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10,
   adapter: Ecto.Adapters.Postgres
@@ -14,7 +14,9 @@ config :dukkadee, Dukkadee.Repo,
 # you can enable the server option below.
 config :dukkadee, DukkadeeWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "QdvPrIcXBRRxwvQbZnqNDQWPZFxzHkTOlzOWVgcSXXQSRGTALOBMUHRXWZrQDEPE",
+  secret_key_base:
+    System.get_env("SECRET_KEY_BASE") ||
+      "QdvPrIcXBRRxwvQbZnqNDQWPZFxzHkTOlzOWVgcSXXQSRGTALOBMUHRXWZrQDEPE",
   server: false
 
 # In test we don't send emails.

@@ -29,6 +29,12 @@ defmodule DukkadeeWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :store_owner do
+    plug :put_root_layout, {DukkadeeWeb.LayoutView, :store_owner}
+    # Add authentication plug to ensure user owns the store
+    # plug DukkadeeWeb.Plugs.EnsureStoreOwner
+  end
+
   # Public routes that don't require authentication
   scope "/", DukkadeeWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
@@ -224,6 +230,54 @@ defmodule DukkadeeWeb.Router do
     live "/stores/:store_id/pages/:id/edit", AdminLive.Pages, :edit
     
     live "/stores/:store_id/settings", AdminLive.Settings, :index
+  end
+
+  # Marketplace routes
+  scope "/", DukkadeeWeb do
+    pipe_through :browser
+
+    live "/marketplace", MarketplaceLive.Index, :index
+    live "/marketplace/categories/:category", MarketplaceLive.Index, :category
+    
+    # Store admin routes - requires store owner authentication
+    live "/stores/:store_id/admin", AdminLive.Dashboard, :index
+    live "/stores/:store_id/admin/products", AdminLive.Products, :index
+    live "/stores/:store_id/admin/products/new", AdminLive.Products, :new
+    live "/stores/:store_id/admin/products/:id/edit", AdminLive.Products, :edit
+    live "/stores/:store_id/admin/orders", AdminLive.Orders, :index
+    live "/stores/:store_id/admin/orders/:id", AdminLive.Orders, :show
+    live "/stores/:store_id/admin/settings", AdminLive.Settings, :index
+  end
+
+  # Public routes
+  scope "/", DukkadeeWeb do
+    pipe_through :browser
+
+    # Home page
+    live "/", HomeLive.Index, :index
+    
+    # Stores
+    live "/stores", StoreLive.Index, :index
+    live "/stores/:slug", StoreLive.Show, :show
+    live "/stores/:store_id/products/:id", ProductLive.Show, :show
+    
+    # Marketplace
+    live "/marketplace", MarketplaceLive.Index, :index
+    live "/marketplace/categories/:category", MarketplaceLive.Index, :category
+  end
+  
+  # Store owner routes
+  scope "/", DukkadeeWeb do
+    pipe_through [:browser, :store_owner]
+    
+    # Store admin routes - requires store owner authentication
+    live "/stores/:store_id/admin", AdminLive.Dashboard, :index
+    live "/stores/:store_id/admin/products", AdminLive.Products, :index
+    live "/stores/:store_id/admin/products/new", AdminLive.Products, :new
+    live "/stores/:store_id/admin/products/:id/edit", AdminLive.Products, :edit
+    live "/stores/:store_id/admin/orders", AdminLive.Orders, :index
+    live "/stores/:store_id/admin/orders/:id", AdminLive.Orders, :show
+    live "/stores/:store_id/admin/settings", AdminLive.Settings, :index
   end
 
   # Enable LiveDashboard in development

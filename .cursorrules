@@ -1,5 +1,10 @@
-# Dukkadee (.windsurfrules)
-# Development standards and style guidelines for the Dukkadee project
+---
+description: Development standards and style guidelines for the Dukkadee/Africa Ecommerce project
+globs: ["**/*.ex", "**/*.exs", "**/*.heex", "**/*.js", "**/*.css"]
+alwaysApply: true
+---
+
+# Dukkadee/Africa Ecommerce Development Guidelines
 
 ## Project Organization
 - Respect Phoenix context boundaries
@@ -7,6 +12,7 @@
 - Place LiveView files in appropriate directories
 - Use consistent naming patterns for modules and files
 - Maintain explicit boundaries between contexts
+- Design with future CRM and ERP modules in mind
 
 ## Elixir Coding Standards
 - Follow Elixir style guide and conventions
@@ -38,6 +44,7 @@
 - Handle database errors gracefully
 - Preload related data to avoid N+1 query problems
 - Create appropriate database indexes for performance
+- Design extensible schemas for future modules
 
 ## Test Requirements
 - Write comprehensive unit tests for context functions
@@ -58,6 +65,7 @@
 - Follow secure coding practices
 - Regular security audits
 - Proper error handling that doesn't leak sensitive information
+- Design authentication and authorization for future module integration
 
 ## Performance Optimization
 - Optimize database queries
@@ -92,9 +100,16 @@
 - Support efficient product management
 - Design for extensibility and future integration with other technologies
 
-## Shadcn UI Component Integration
+## UI Component Integration
 - Maintain accessibility features
 - Adapt components for LiveView compatibility
 - Preserve component styling conventions
 - Use Tailwind utility classes consistently
 - Follow mobile-first responsive design approach
+
+## Future Module Considerations
+- Design API interfaces that can be consumed by CRM and ERP modules
+- Structure database schemas with extensibility for customer and resource relationships
+- Implement a plug-in architecture that allows for module integration
+- Create a consistent event system for cross-module communication
+- Design UI navigation with space for future module access 

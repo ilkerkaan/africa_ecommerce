@@ -1,33 +1,38 @@
-FROM elixir:1.14-alpine
+FROM elixir:1.16-alpine
 
-RUN apk update && \
-    apk add --no-cache build-base nodejs npm git postgresql-client
+# Sistem bağımlılıklarını kur
+RUN apk add --update --no-cache \
+    build-base \
+    git \
+    nodejs \
+    npm \
+    postgresql-client \
+    inotify-tools \
+    tzdata
 
+# Çalışma dizinini ayarla
 WORKDIR /app
 
-# Install hex, rebar, and phoenix
+# Gerekli araçları kur
 RUN mix local.hex --force && \
-    mix local.rebar --force && \
-    mix archive.install hex phx_new 1.7.7 --force
+    mix local.rebar --force
 
-# Copy configuration files
+# Phoenix 1.7 için Node.js bağımlılıklarını kur
+RUN npm install -g esbuild
+
+# Tüm Mix bağımlılıklarını kopyala ve kur
 COPY mix.exs mix.lock ./
-COPY config config
+RUN mix deps.get --only prod
 
-# Install dependencies
+# Diğer tüm proje dosyalarını kopyala
+COPY . .
+
+# Dev ortamı için tüm bağımlılıkları kur
 RUN mix deps.get
+RUN cd assets && npm install
 
-# Copy assets directory
-COPY assets assets
+# Erişim noktasını belirle
+EXPOSE 4003
 
-# Copy the rest of the application code
-COPY priv priv
-COPY lib lib
-COPY test test
-
-# Compile the application
-RUN mix do compile
-
-EXPOSE 4000
-
+# Entrypoint
 CMD ["mix", "phx.server"]

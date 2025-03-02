@@ -43,6 +43,8 @@ npm-debug.log
 .env.development.local
 .env.test.local
 .env.production.local
+.envrc
+pgpass.conf
 
 # Editor directories and files
 .idea/
@@ -59,3 +61,23 @@ npm-debug.log
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Elixir Language Server
+.elixir_ls/
+
+# Temporary files
+/tmp/
+*.tmp
+
+# Log files
+/log/
+*.log
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Yardımcı araç dosyaları
+mark_migrations.exs
+reset_migrations.exs
+terminate_connections.ps1

@@ -1,4 +1,4 @@
-# Phoenix Sunucusu Başlatma Scripti
+# Veritabanı Sıfırlama ve Phoenix Sunucusu Başlatma Scripti
 # Dukkadee/Africa Ecommerce Projesi için
 
 # Çevre değişkenlerini yükle
@@ -13,6 +13,7 @@ if (Test-Path .env) {
     Write-Host "ENV değişkenleri yüklendi." -ForegroundColor Green
 } else {
     Write-Host ".env dosyası bulunamadı!" -ForegroundColor Red
+    exit 1
 }
 
 # Çalışan Erlang/Elixir süreçlerini sonlandır
@@ -21,23 +22,19 @@ Get-Process erl -ErrorAction SilentlyContinue | Stop-Process -Force
 Get-Process epmd -ErrorAction SilentlyContinue | Stop-Process -Force
 Write-Host "Tüm Erlang süreçleri sonlandırıldı." -ForegroundColor Green
 
-# Veritabanı bağlantısını kontrol et
-Write-Host "Veritabanı bağlantısı kontrol ediliyor..." -ForegroundColor Yellow
+# PostgreSQL yolunu ayarla
 $env:Path += ";C:\Program Files\PostgreSQL\15\bin"
 $env:PGPASSWORD = $env:POSTGRES_PASSWORD
 
-try {
-    $result = psql -U $env:POSTGRES_USER -h $env:POSTGRES_HOST -d $env:POSTGRES_DB -c "SELECT 1 as connection_test;" -t
-    if ($result -match "1") {
-        Write-Host "Veritabanı bağlantısı başarılı." -ForegroundColor Green
-    } else {
-        Write-Host "Veritabanı bağlantısı başarısız!" -ForegroundColor Red
-        exit 1
-    }
-} catch {
-    Write-Host "Veritabanı bağlantısı başarısız: $_" -ForegroundColor Red
-    exit 1
-}
+# Veritabanını sıfırla
+Write-Host "Veritabanı sıfırlanıyor..." -ForegroundColor Yellow
+mix run reset_db.exs
+Write-Host "Veritabanı sıfırlandı." -ForegroundColor Green
+
+# Göçleri çalıştır
+Write-Host "Göçler çalıştırılıyor..." -ForegroundColor Yellow
+mix ecto.migrate
+Write-Host "Göçler tamamlandı." -ForegroundColor Green
 
 # Bağımlılıkları güncelle
 Write-Host "Bağımlılıklar güncelleniyor..." -ForegroundColor Yellow
@@ -54,4 +51,4 @@ Write-Host "Varlıklar derlendi." -ForegroundColor Green
 # Phoenix sunucusunu başlat
 Write-Host "Phoenix sunucusu başlatılıyor..." -ForegroundColor Yellow
 Write-Host "Sunucu adresi: http://localhost:$env:PORT" -ForegroundColor Cyan
-mix phx.server
+mix phx.server 

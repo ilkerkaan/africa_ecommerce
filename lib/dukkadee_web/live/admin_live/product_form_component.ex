@@ -118,6 +118,50 @@ defmodule DukkadeeWeb.AdminLive.ProductFormComponent do
             <.input field={@changeset[:stock_quantity]} type="number" label="Stock Quantity" />
           </div>
 
+          <div class="flex space-x-4">
+            <div class="flex items-center">
+              <.input 
+                field={@changeset[:is_published]} 
+                type="checkbox" 
+                label="Published" 
+                checked={@changeset.data.is_published} 
+              />
+            </div>
+            
+            <div class="flex items-center">
+              <.input 
+                field={@changeset[:is_featured]} 
+                type="checkbox" 
+                label="Featured" 
+                checked={@changeset.data.is_featured}
+              />
+              <span class="ml-2 text-xs text-gray-500">
+                Featured products will be displayed in the marketplace homepage and store homepage
+              </span>
+            </div>
+
+            <div class="flex items-center">
+              <.input 
+                field={@changeset[:is_marketplace_listed]} 
+                type="checkbox" 
+                label="List in Marketplace" 
+                checked={@changeset.data.is_marketplace_listed}
+              />
+              <span class="ml-2 text-xs text-gray-500">
+                Make this product available in the global marketplace
+              </span>
+            </div>
+
+            <div class="flex items-center">
+              <.input 
+                field={@changeset[:requires_appointment]} 
+                type="checkbox" 
+                label="Requires Appointment" 
+                checked={@changeset.data.requires_appointment} 
+              />
+            </div>
+          </div>
+
           <div class="mt-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">
               Product Images

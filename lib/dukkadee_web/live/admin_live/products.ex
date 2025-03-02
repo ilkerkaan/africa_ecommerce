@@ -1,24 +1,25 @@
 defmodule DukkadeeWeb.AdminLive.Products do
   use DukkadeeWeb, :live_view
-  
+
   alias Dukkadee.Products
   alias Dukkadee.Products.Product
 
   @impl true
   def mount(%{"store_id" => store_id}, _session, socket) do
     # Set up LiveView uploads for product images
-    {:ok, 
+    {:ok,
      socket
      |> assign(:store_id, store_id)
      |> assign(:products, list_products(store_id))
      |> assign(:page_title, "Manage Products")
-     |> allow_upload(:product_images, 
-        accept: ~w(.jpg .jpeg .png),
-        max_entries: 5,
-        max_file_size: 10_000_000, # 10MB
-        auto_upload: true,
-        progress: &handle_progress/3
-      )}
+     |> allow_upload(:product_images,
+       accept: ~w(.jpg .jpeg .png),
+       max_entries: 5,
+       # 10MB
+       max_file_size: 10_000_000,
+       auto_upload: true,
+       progress: &handle_progress/3
+     )}
   end
 
   @impl true
@@ -53,6 +54,14 @@ defmodule DukkadeeWeb.AdminLive.Products do
   end
 
   @impl true
+  def handle_event("toggle-marketplace", %{"id" => id}, socket) do
+    product = Products.get_product!(id)
+    {:ok, _product} = Products.toggle_marketplace_listing(product)
+
+    {:noreply, assign(socket, :products, list_products(socket.assigns.store_id))}
+  end
+
+  @impl true
   def handle_event("validate", %{"product" => product_params}, socket) do
     changeset =
       %Product{}
@@ -73,10 +82,10 @@ defmodule DukkadeeWeb.AdminLive.Products do
         File.cp!(path, dest)
         Routes.static_path(socket, "/uploads/#{entry.uuid}.#{ext(entry)}")
       end)
-    
+
     # Add uploaded files to product params
     product_params = Map.put(product_params, "images", uploaded_files)
-    
+
     # Save product
     case Products.create_product(Map.put(product_params, "store_id", socket.assigns.store_id)) do
       {:ok, _product} ->
@@ -102,7 +111,7 @@ defmodule DukkadeeWeb.AdminLive.Products do
     else
       # Calculate progress percentage
       _progress = floor(entry.progress * 100)
-      
+
       # You could broadcast this progress to other users if needed
       # For now, we just return the socket
       {:noreply, socket}
@@ -112,7 +121,7 @@ defmodule DukkadeeWeb.AdminLive.Products do
   defp list_products(store_id) do
     Products.list_products_by_store(store_id)
   end
-  
+
   defp ext(entry) do
     [ext | _] = MIME.extensions(entry.client_type)
     ext
@@ -140,6 +149,7 @@ defmodule DukkadeeWeb.AdminLive.Products do
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marketplace</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -164,9 +174,27 @@ defmodule DukkadeeWeb.AdminLive.Products do
                   <div class="text-sm text-gray-900">$<%= product.price %></div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Active
-                  </span>
+                  <%= if product.is_published do %>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Active
+                    </span>
+                  <% else %>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                      Draft
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <button
+                    phx-click="toggle-marketplace"
+                    phx-value-id={product.id}
+                    class={[
+                      "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
+                      if(product.is_marketplace_listed, do: "bg-blue-100 text-blue-800", else: "bg-gray-100 text-gray-800")
+                    ]}
+                  >
+                    <%= if product.is_marketplace_listed, do: "Listed", else: "Not Listed" %>
+                  </button>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <.link

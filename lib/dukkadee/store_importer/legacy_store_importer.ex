@@ -43,7 +43,7 @@ defmodule Dukkadee.StoreImporter.LegacyStoreImporter do
     {:ok, %{
       name: extract_store_name(url),
       description: "Imported from #{url}",
-      logo_url: nil,
+      logo: nil,
       products_count: 10,
       pages_count: 5,
       html_content: "<html>...</html>" # This would be the full HTML content

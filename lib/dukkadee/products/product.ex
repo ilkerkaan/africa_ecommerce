@@ -11,6 +11,8 @@ defmodule Dukkadee.Products.Product do
     field :images, {:array, :string}, default: []
     field :requires_appointment, :boolean, default: false
     field :is_published, :boolean, default: true
+    field :is_featured, :boolean, default: false
+    field :is_marketplace_listed, :boolean, default: false
     field :category, :string
     field :tags, {:array, :string}, default: []
     
@@ -23,7 +25,7 @@ defmodule Dukkadee.Products.Product do
 
   def changeset(%Product{} = product, attrs) do
     product
-    |> cast(attrs, [:name, :description, :price, :currency, :images, :requires_appointment, :is_published, :category, :tags, :store_id])
+    |> cast(attrs, [:name, :description, :price, :currency, :images, :requires_appointment, :is_published, :is_featured, :is_marketplace_listed, :category, :tags, :store_id])
     |> validate_required([:name, :price, :store_id])
     |> validate_number(:price, greater_than_or_equal_to: 0)
   end

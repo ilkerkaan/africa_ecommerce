@@ -14,17 +14,18 @@ alias Dukkadee.Repo
 alias Dukkadee.Accounts.User
 alias Dukkadee.Stores.Store
 
-# Create admin user
-admin_user = Repo.insert!(
-  %User{
-    email: "admin@dukkadee.com",
-    password_hash: "temporary_hash_for_development", # This is just for development, in production use proper hashing
-    is_admin: true
-  },
-  on_conflict: :nothing
-)
+# Create admin user with proper password hashing
+{:ok, admin_user} = %User{
+  email: "admin@dukkadee.com",
+  is_admin: true
+}
+|> User.changeset(%{
+  password: "password123",
+  password_confirmation: "password123"
+})
+|> Repo.insert(on_conflict: {:replace, [:updated_at]}, conflict_target: :email)
 
-# Create Inklessismore store
+# Create Inkless Is More store
 Repo.insert!(
   %Store{
     name: "Inkless Is More",
@@ -33,7 +34,7 @@ Repo.insert!(
     primary_color: "#fddb24",
     secondary_color: "#b7acd4",
     accent_color: "#272727",
-    logo_url: "/images/inklessismore-logo.png",
+    logo: "/images/inklessismore-logo.png",
     user_id: admin_user.id
   },
   on_conflict: :replace_all,
@@ -49,7 +50,7 @@ Repo.insert!(
     primary_color: "#00AA55",
     secondary_color: "#FF6600",
     accent_color: "#333333",
-    logo_url: "/images/lagos-fashion-logo.png",
+    logo: "/images/lagos-fashion-logo.png",
     user_id: admin_user.id
   },
   on_conflict: :replace_all,
@@ -65,7 +66,7 @@ Repo.insert!(
     primary_color: "#0066CC",
     secondary_color: "#FFCC00",
     accent_color: "#222222",
-    logo_url: "/images/capetown-artisans-logo.png",
+    logo: "/images/capetown-artisans-logo.png",
     user_id: admin_user.id
   },
   on_conflict: :replace_all,
@@ -81,7 +82,7 @@ Repo.insert!(
     primary_color: "#CC0000",
     secondary_color: "#00CC00",
     accent_color: "#2A2A2A",
-    logo_url: "/images/accra-spice-logo.png",
+    logo: "/images/accra-spice-logo.png",
     user_id: admin_user.id
   },
   on_conflict: :replace_all,

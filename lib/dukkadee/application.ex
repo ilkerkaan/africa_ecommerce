@@ -7,6 +7,9 @@ defmodule Dukkadee.Application do
 
   @impl true
   def start(_type, _args) do
+    # Load environment variables from .env file
+    Dukkadee.Env.load_env()
+
     children = [
       # Start the Telemetry supervisor
       DukkadeeWeb.Telemetry,

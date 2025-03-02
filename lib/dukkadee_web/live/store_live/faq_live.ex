@@ -17,7 +17,7 @@ defmodule DukkadeeWeb.StoreLive.FaqLive do
           primary_color: "#fddb24",
           secondary_color: "#b7acd4",
           accent_color: "#272727",
-          logo_url: "/images/inklessismore-logo.png"
+          logo: "/images/inklessismore-logo.png"
         }
       found_store -> found_store
     end
