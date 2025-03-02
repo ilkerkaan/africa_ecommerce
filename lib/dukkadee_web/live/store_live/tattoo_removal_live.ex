@@ -5,9 +5,26 @@ defmodule DukkadeeWeb.StoreLive.TattooRemovalLive do
   alias Dukkadee.Products
   
   @impl true
-  def mount(%{"slug" => "inklessismore-ke"} = _params, _session, socket) do
-    store = Stores.get_store_by_slug!("inklessismore-ke")
-    products = Products.list_store_products(store.id)
+  def mount(_params, _session, socket) do
+    # Try to get the store, or create a default one if it doesn't exist
+    store = case Stores.get_store_by_slug("inklessismore-ke") do
+      nil -> 
+        # Return a default store structure when the actual store is not found
+        %{
+          id: 0,
+          name: "Inkless Is More",
+          slug: "inklessismore-ke",
+          description: "Nairobi's Premier Laser Tattoo Removal Studio",
+          primary_color: "#fddb24",
+          secondary_color: "#b7acd4",
+          accent_color: "#272727",
+          logo_url: "/images/inklessismore-logo.png"
+        }
+      found_store -> found_store
+    end
+    
+    # Get products or default to empty list if store doesn't exist
+    products = if store.id == 0, do: [], else: Products.list_store_products(store.id)
     
     {:ok,
      socket

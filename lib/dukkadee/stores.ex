@@ -4,9 +4,7 @@ defmodule Dukkadee.Stores do
   """
 
   import Ecto.Query, warn: false
-  
-  # Get the repo from config, defaulting to Dukkadee.Repo
-  def repo, do: Application.get_env(:dukkadee, :repo, Dukkadee.Repo)
+  alias Dukkadee.Repo
 
   alias Dukkadee.Stores.Store
 
@@ -14,7 +12,7 @@ defmodule Dukkadee.Stores do
   Returns the list of stores.
   """
   def list_stores do
-    repo().all(Store)
+    Repo.all(Store)
   end
 
   @doc """
@@ -22,20 +20,27 @@ defmodule Dukkadee.Stores do
   """
   def list_stores_by_owner(user_id) do
     query = from s in Store, where: s.user_id == ^user_id
-    repo().all(query)
+    Repo.all(query)
   end
 
   @doc """
   Gets a single store.
   """
-  def get_store(id), do: repo().get(Store, id)
+  def get_store(id), do: Repo.get(Store, id)
 
   @doc """
   Gets a single store by slug.
   """
   def get_store_by_slug(slug) do
+    Repo.get_by(Store, slug: slug)
+  end
+
+  @doc """
+  Gets a single store by slug, raises an error if not found.
+  """
+  def get_store_by_slug!(slug) do
     query = from s in Store, where: s.slug == ^slug
-    repo().one(query)
+    Repo.one!(query)
   end
 
   @doc """
@@ -43,7 +48,7 @@ defmodule Dukkadee.Stores do
   """
   def get_store_by_domain(domain) do
     query = from s in Store, where: s.domain == ^domain
-    repo().one(query)
+    Repo.one(query)
   end
 
   @doc """
@@ -52,7 +57,7 @@ defmodule Dukkadee.Stores do
   def create_store(attrs \\ %{}) do
     %Store{}
     |> Store.changeset(attrs)
-    |> repo().insert()
+    |> Repo.insert()
   end
 
   @doc """
@@ -61,14 +66,14 @@ defmodule Dukkadee.Stores do
   def update_store(%Store{} = store, attrs) do
     store
     |> Store.changeset(attrs)
-    |> repo().update()
+    |> Repo.update()
   end
 
   @doc """
   Deletes a store.
   """
   def delete_store(%Store{} = store) do
-    repo().delete(store)
+    Repo.delete(store)
   end
 
   @doc """
@@ -87,6 +92,6 @@ defmodule Dukkadee.Stores do
     from(s in Store,
       where: ilike(s.name, ^wildcard_query) or ilike(s.description, ^wildcard_query)
     )
-    |> repo().all()
+    |> Repo.all()
   end
 end

@@ -45,8 +45,6 @@ defmodule Dukkadee.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 1.8"}
-      # Temporarily commenting out bcrypt_elixir until Visual C++ Build Tools are installed
-      # {:bcrypt_elixir, "~> 3.0", override: true}
     ]
   end
 

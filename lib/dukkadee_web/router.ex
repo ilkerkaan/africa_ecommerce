@@ -15,6 +15,16 @@ defmodule DukkadeeWeb.Router do
     plug :fetch_current_customer
   end
 
+  pipeline :store_browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {DukkadeeWeb.Layouts, :store}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_customer
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -85,24 +95,6 @@ defmodule DukkadeeWeb.Router do
     live "/marketplace/categories/:category", MarketplaceLive.Index, :category
     live "/open_new_store", StoreCreationLive.Index, :index
     
-    # Inkless Is More Store Routes
-    live "/stores/inklessismore-ke", StoreLive.TattooRemovalLive, :index
-    live "/stores/inklessismore-ke/book/:product_id", StoreLive.TattooRemovalLive, :book
-    
-    # Inkless Is More Enhanced Features
-    live "/stores/inklessismore-ke/gallery", StoreLive.TattooGalleryLive, :index
-    live "/stores/inklessismore-ke/gallery/:category", StoreLive.TattooGalleryLive, :category
-    live "/stores/inklessismore-ke/testimonials", StoreLive.TestimonialsLive, :index
-    live "/stores/inklessismore-ke/blog", StoreLive.TattooBlogLive, :index
-    live "/stores/inklessismore-ke/blog/:slug", StoreLive.TattooBlogLive, :show
-    live "/stores/inklessismore-ke/staff", StoreLive.StaffProfilesLive, :index
-    live "/stores/inklessismore-ke/gift-certificates", StoreLive.GiftCertificatesLive, :index
-    live "/stores/inklessismore-ke/gift-certificates/purchase", StoreLive.GiftCertificatesLive, :purchase
-    live "/stores/inklessismore-ke/gift-certificates/redeem", StoreLive.GiftCertificatesLive, :redeem
-    
-    # Appointment Routes
-    live "/appointments/confirmation/:id", AppointmentLive.ConfirmationLive, :show
-    
     # Store templates routes
     get "/templates", StoreTemplateController, :index
     get "/templates/import", StoreTemplateController, :import_legacy
@@ -114,6 +106,36 @@ defmodule DukkadeeWeb.Router do
     # Legacy store import routes
     post "/api/legacy-store/import", LegacyStoreController, :import
     get "/legacy-store/import/progress/:id", LegacyStoreController, :progress
+    
+    # Appointment Routes
+    live "/appointments/confirmation/:id", AppointmentLive.ConfirmationLive, :show
+  end
+  
+  # Inkless Is More Store Routes with custom layout
+  scope "/stores/inklessismore-ke", DukkadeeWeb do
+    pipe_through :store_browser
+    
+    live "/", StoreLive.TattooRemovalLive, :index
+    live "/book/:product_id", StoreLive.TattooRemovalLive, :book
+    
+    # Inkless Is More Enhanced Features
+    live "/gallery", StoreLive.GalleryLive, :index
+    live "/gallery/:category", StoreLive.TattooGalleryLive, :category
+    live "/testimonials", StoreLive.TestimonialsLive, :index
+    live "/blog", StoreLive.TattooBlogLive, :index
+    live "/blog/:slug", StoreLive.TattooBlogLive, :show
+    live "/staff", StoreLive.StaffProfilesLive, :index
+    live "/gift-certificates", StoreLive.GiftCertificatesLive, :index
+    live "/gift-certificates/purchase", StoreLive.GiftCertificatesLive, :purchase
+    live "/gift-certificates/redeem", StoreLive.GiftCertificatesLive, :redeem
+    
+    # New routes for the menu items in the photo
+    live "/how-it-works", StoreLive.HowItWorksLive, :index
+    live "/treatment-cost", StoreLive.TreatmentCostLive, :index
+    live "/faq", StoreLive.FaqLive, :index
+    live "/about", StoreLive.AboutLive, :index
+    live "/gallery", StoreLive.GalleryLive, :index
+    live "/contact", StoreLive.ContactLive, :index
   end
 
   # Customer portal routes that require customer authentication
